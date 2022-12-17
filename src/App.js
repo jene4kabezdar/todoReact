@@ -1,43 +1,42 @@
 import "./index.css"
-import { root } from "./index"
 import Input from "./components/Input"
 import Task from "./components/Task"
+import {useState} from "react";
 
 
-let taskKeeper = []
 let count = 0;
 
-function addTask(event, id, taskText) {
-    if (event.key === "Enter") {
-        event.target.value = ""
-        taskKeeper.push({id: id, taskText: taskText})
-        count++
-        root.render(
-            <App />
-        )
-    }
-}
-
-function deleteTask(event) {
-    const { id } = event.target.dataset
-    console.log(event.target)
-    console.log(id)
-    const idToInt = parseInt(id, 10)
-    taskKeeper = taskKeeper.filter(task => task.id !== idToInt)
-    root.render(
-        <App />
-    )
-}
-
 export default function App() {
-    const taskBar = taskKeeper.map(
-        task =>
-            <Task key={task.id} taskText={task.taskText} id={task.id} deleteTask={deleteTask}/>
-    )
+    const [tasks, setTasks] = useState([]);
+
+    function addTask(event) {
+        if (event.key === 'Enter') {
+            setTasks([
+                ...tasks,
+                {id: count, text: event.target.value},
+            ]);
+            event.target.value = '';
+            count++;
+        }
+    }
+
+    function deleteTask(event) {
+        const { id } = event.target.dataset;
+        setTasks(
+            tasks.filter(
+                task => task.id !== parseInt(id, 10)
+            )
+        );
+    }
+
+    const taskBar = tasks.map(
+        task => <Task key={task.id} taskText={task.text} id={task.id} deleteTask={event => deleteTask(event)}/>
+    );
+
     return (
         <div className="flex justify-center relative">
             <div className="w-1/4 items-center mt-4">
-                <Input addTask={addTask} count={count}/>
+                <Input setTask={event => addTask(event, count)}/>
                 {taskBar}
             </div>
         </div>
