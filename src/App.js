@@ -10,7 +10,7 @@ export default function App() {
     const [tasks, setTasks] = useState([]);
 
     function addTask(event) {
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && event.target.value !== '') {
             setTasks([
                 ...tasks,
                 {id: count, text: event.target.value},
